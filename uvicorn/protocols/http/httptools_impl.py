@@ -342,14 +342,14 @@ class HttpToolsProtocol(asyncio.Protocol):
         """
         Called by the transport when the write buffer exceeds the high water mark.
         """
-        self.logger.log(TRACE_LOG_LEVEL, "%s**** PAUSE WRITING", prefix)
+        self.logger.log(TRACE_LOG_LEVEL, "%s**** PAUSE WRITING")
         self.flow.pause_writing()
 
     def resume_writing(self) -> None:
         """
         Called by the transport when the write buffer drops below the low water mark.
         """
-        self.logger.log(TRACE_LOG_LEVEL, "%s**** RESUME WRITING", prefix)
+        self.logger.log(TRACE_LOG_LEVEL, "%s**** RESUME WRITING")
         self.flow.resume_writing()
 
     def timeout_keep_alive_handler(self) -> None:
