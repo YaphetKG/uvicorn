@@ -28,20 +28,24 @@ class FlowControl:
 
     def pause_reading(self) -> None:
         if not self.read_paused:
+            self.logger.info("***** PAUSE READING ")
             self.read_paused = True
             self._transport.pause_reading()
 
     def resume_reading(self) -> None:
+        self.logger.info("***** RESUME READING ")
         if self.read_paused:
             self.read_paused = False
             self._transport.resume_reading()
 
     def pause_writing(self) -> None:
+        elf.logger.info("***** PAUSE WRITING ")
         if not self.write_paused:
             self.write_paused = True
             self._is_writable_event.clear()
 
     def resume_writing(self) -> None:
+        elf.logger.info("***** RESUME WRITING ")
         if self.write_paused:
             self.write_paused = False
             self._is_writable_event.set()
