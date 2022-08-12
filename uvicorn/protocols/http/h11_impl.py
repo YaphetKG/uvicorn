@@ -322,6 +322,9 @@ class H11Protocol(asyncio.Protocol):
 
         # Unblock any pipelined events.
         if self.conn.our_state is h11.DONE and self.conn.their_state is h11.DONE:
+            if self.logger.level <= TRACE_LOG_LEVEL:
+                prefix = "%s:%d - " % self.client if self.client else ""
+                self.logger.log(TRACE_LOG_LEVEL, "%s******* RESPONSE COMPLETE ", prefix)
             self.conn.start_next_cycle()
             self.handle_events()
 
@@ -340,12 +343,18 @@ class H11Protocol(asyncio.Protocol):
         """
         Called by the transport when the write buffer exceeds the high water mark.
         """
+        if self.logger.level <= TRACE_LOG_LEVEL:
+            prefix = "%s:%d - " % self.client if self.client else ""
+            self.logger.log(TRACE_LOG_LEVEL, "%s******* PAUSE WRITING", prefix)
         self.flow.pause_writing()
 
     def resume_writing(self) -> None:
         """
         Called by the transport when the write buffer drops below the low water mark.
         """
+        if self.logger.level <= TRACE_LOG_LEVEL:
+            prefix = "%s:%d - " % self.client if self.client else ""
+            self.logger.log(TRACE_LOG_LEVEL, "%s******* RESUME WRITING", prefix)
         self.flow.resume_writing()
 
     def timeout_keep_alive_handler(self) -> None:
