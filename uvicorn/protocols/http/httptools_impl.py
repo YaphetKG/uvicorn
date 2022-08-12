@@ -132,9 +132,11 @@ class HttpToolsProtocol(asyncio.Protocol):
 
         if self.cycle and not self.cycle.response_complete:
             self.cycle.disconnected = True
+            self.logger.log(TRACE_LOG_LEVEL, "%s***** HTTP Cycle disconnected", prefix)
         if self.cycle is not None:
             self.cycle.message_event.set()
         if self.flow is not None:
+            self.logger.log(TRACE_LOG_LEVEL, "%s***** HTTP Flow resuming writing...", prefix)
             self.flow.resume_writing()
         if exc is None:
             self.transport.close()
@@ -293,6 +295,7 @@ class HttpToolsProtocol(asyncio.Protocol):
             return
         self.cycle.body += body
         if len(self.cycle.body) > HIGH_WATER_LIMIT:
+            self.logger.log(TRACE_LOG_LEVEL, "%s**** WATER LIMIT REACHED PAUSING READING", prefix)
             self.flow.pause_reading()
         self.cycle.message_event.set()
 
@@ -339,12 +342,14 @@ class HttpToolsProtocol(asyncio.Protocol):
         """
         Called by the transport when the write buffer exceeds the high water mark.
         """
+        self.logger.log(TRACE_LOG_LEVEL, "%s**** PAUSE WRITING", prefix)
         self.flow.pause_writing()
 
     def resume_writing(self) -> None:
         """
         Called by the transport when the write buffer drops below the low water mark.
         """
+        self.logger.log(TRACE_LOG_LEVEL, "%s**** RESUME WRITING", prefix)
         self.flow.resume_writing()
 
     def timeout_keep_alive_handler(self) -> None:
