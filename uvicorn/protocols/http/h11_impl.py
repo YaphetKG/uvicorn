@@ -537,6 +537,7 @@ class RequestResponseCycle:
             self.on_response()
 
     async def receive(self) -> "ASGIReceiveEvent":
+        self.logger.info("***** CANARY LOG ")
         if self.waiting_for_100_continue and not self.transport.is_closing():
             event = h11.InformationalResponse(
                 status_code=100, headers=[], reason="Continue"
@@ -553,6 +554,10 @@ class RequestResponseCycle:
         message: "Union[HTTPDisconnectEvent, HTTPRequestEvent]"
         if self.disconnected or self.response_complete:
             message = {"type": "http.disconnect"}
+            if self.response_complete:
+                self.logger.info("***** DISCONNECTED - RESPONSE COMPLETE")
+            else:
+                self.logger.info("***** DISCONNECTED - RESOPONSE NOT COMPLETE")
         else:
             message = {
                 "type": "http.request",
